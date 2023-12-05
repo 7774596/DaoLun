@@ -1,0 +1,56 @@
+CREATE USER '7774596'@'localhost' IDENTIFIED BY '7774596';
+
+CREATE DATABASE test01;
+
+GRANT ALL PRIVILEGES ON test01.* TO '7774596'@'localhost';   //前置工作
+
+
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50),
+    sex VARCHAR(10),
+    age INT,
+    phone VARCHAR(20)
+);                                                          //建表
+
+INSERT INTO user (name, sex, age, phone) VALUES     //往表中插入对象
+    ('uzi', 'Male', 26, '114514'),
+    ('kobe', 'Male', 1, '1919810');
+
+
+
+SELECT * FROM user WHERE age >= 20 AND age <= 30;   //查询所有20-30岁的用户
+
+DELETE FROM user WHERE name LIKE '%张%';    //写出 SQL语句,删除 user 表中名字包含“张”的用户
+
+SELECT AVG(age) AS average_age FROM user;  //写出 SQL语句,计算 user 表中所有用户的平均年龄
+
+SELECT * FROM user WHERE age >= 20 AND age <= 30 AND name LIKE '%张%' ORDER BY age DESC;   //写出 SQL语句,查询 user 表中年龄在 20-30 范围内,名字包含“张”的用户,并按照年龄从大到小排序输出
+
+CREATE TABLE team (
+  id INT PRIMARY KEY,
+  teamName VARCHAR(255)
+);
+
+CREATE TABLE score (
+  id INT PRIMARY KEY,
+  teamid INT,
+  userid INT,
+  score INT,
+  FOREIGN KEY (teamid) REFERENCES team(id),
+  FOREIGN KEY (userid) REFERENCES user(id)
+);                                          //新建两张表,team 表(id,teamName),score 表(id,teamid,userid,score)。其中score 表中的 teamid 为指向 team 表 id 的外键,userid 为指向 user 表 id 的外键
+
+SELECT s.userid, s.score
+FROM team t
+JOIN score s ON t.id = s.teamid
+JOIN user u ON s.userid = u.id
+WHERE t.teamName = 'ECNU' AND u.age < 20;
+
+SELECT t.teamName, COALESCE(SUM(s.score), 0) AS total_score
+FROM team t
+LEFT JOIN score s ON t.id = s.teamid
+WHERE t.teamName = 'ECNU'
+GROUP BY t.teamName;                        //写出 SQL语句,查询 tcamName 为“ECNU”的队伍中,年龄小于 20 的用户们。10.写出 SQL语句,计算 teamName 为“ECNU”的总分(假设 score 存在 null 值,null值默认为 0加入计算)。
+
+
